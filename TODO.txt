@@ -1,0 +1,5 @@
+NOW
+===
+- [queue]  ignore imcomplete readings
+  - need to find common thread in incomplete alerts / alerts with incorrect MAC
+- if wrong spreadsheet key sent to import/preview fail gracefully
