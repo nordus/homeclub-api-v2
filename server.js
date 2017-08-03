@@ -1,4 +1,6 @@
 
+require('es6-shim');
+
 var HTTPS_PORT      = 3030;
 
 var trans = require( 'coffee-script' );
