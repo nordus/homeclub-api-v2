@@ -1,6 +1,8 @@
 
 require('es6-shim');
 
+var ngrok           = require( 'ngrok' );
+
 var HTTPS_PORT      = 3030;
 
 var trans = require( 'coffee-script' );
@@ -73,6 +75,24 @@ app.use( router );
 
 // once database is connected start the app
 db.once('open', function() {
+  
+  // ngrok
+  ngrok.connect({
+      proto: 'tls', // http|tcp|tls 
+      addr: 3030, // port or network address 
+      // auth: 'user:pwd', // http basic authentication for tunnel 
+      // subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io 
+      authtoken: '3TkVnXuTWQ9HBxhjRs3KB_3cmajzCT2KsNEnbF2eEea', // your authtoken from ngrok.com 
+      // region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us, 
+      // configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file 
+      hostname: 'api.homeclub.us',
+      key: __dirname + '/api_homeclub_us.key',
+      crt: __dirname + '/api_homeclub_us.crt'
+      // key: sslOptions.key,
+      // crt: sslOptions.cert
+  }, function (err, url) {
+    console.log( err || url );
+  });
   
   // HTTP
   app.listen(3030, function () {
