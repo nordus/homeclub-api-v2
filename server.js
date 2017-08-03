@@ -95,7 +95,7 @@ function authenticate( req, res, next ) {
   
   User.findOne(
     { email: body.username.toLowerCase() },
-    ( err, user ) => {
+    function( err, user ) {
       if ( user === null || err ) {
         res.status( 401 ).end( 'Username or password incorrect' );
 
@@ -103,9 +103,9 @@ function authenticate( req, res, next ) {
         if ( user.authenticate( body.password ) ) {        
           
           // keysToPopulate => [ 'roles.customerAccount', 'roles.carrierAdmin', 'roles.homeClubAdmin' ]
-          var keysToPopulate = Object.keys( user.roles.toObject() ).map(( role ) => 'roles.' + role );
+          var keysToPopulate = Object.keys( user.roles.toObject() ).map(function( role ) { return 'roles.' + role } );
           
-          User.findOne( user ).populate( keysToPopulate ).exec(( err, user ) => {
+          User.findOne( user ).populate( keysToPopulate ).exec(function( err, user ) {
             req.user  = user;
             next();
           })
