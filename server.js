@@ -108,7 +108,26 @@ db.once('open', function() {
   hcWebApp.use( express.static( './homeclub-web-gh-pages' ) );
 
   https.createServer( sslOptions, hcWebApp ).listen( HC_WEB_PORT, function() {
+    
     console.log( 'HomeClub STATIC WEB (HTTPS) listening on port ' + HC_WEB_PORT );
+
+    ngrok.connect({
+        proto: 'tls', // http|tcp|tls 
+        addr: HC_WEB_PORT, // port or network address 
+        // auth: 'user:pwd', // http basic authentication for tunnel 
+        // subdomain: 'alex', // reserved tunnel name https://alex.ngrok.io 
+        authtoken: '3TkVnXuTWQ9HBxhjRs3KB_3cmajzCT2KsNEnbF2eEea', // your authtoken from ngrok.com 
+        // region: 'us', // one of ngrok regions (us, eu, au, ap), defaults to us, 
+        // configPath: '~/git/project/ngrok.yml' // custom path for ngrok config file 
+        hostname: 'demo.homeclub.us',
+        key: __dirname + '/api_homeclub_us.key',
+        crt: __dirname + '/api_homeclub_us.crt'
+        // key: sslOptions.key,
+        // crt: sslOptions.cert
+    }, function (err, url) {
+      if ( err )  console.log( 'HomeClub STATIC WEB (HTTPS) - ngrok ERROR:' );
+      console.log( err || url );
+    });
 
     hcWebApp.get('*', function(req, res) {
         res.sendFile(__dirname + '/homeclub-web-gh-pages/index.html'); // load the single view file (angular will handle the page changes on the front-end)
