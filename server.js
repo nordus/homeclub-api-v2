@@ -5,6 +5,8 @@ var ngrok           = require( 'ngrok' );
 
 var HTTPS_PORT      = 3030;
 
+var HC_WEB_PORT     = 3031;
+
 var trans = require( 'coffee-script' );
 if ( trans.register )  trans.register();
 
@@ -22,6 +24,9 @@ var express         = require( 'express' ),
     User            = db.models.User,
     adminApp        = require( './app/lib/firebase-admin-app' ),
     app             = express(),
+
+    // demo.homeclub.us - HOMECLUB STATIC WEB (HTTPS)
+    hcWebApp        = express(),
     https           = require( 'https' );
 
 sslOptions = {
@@ -99,10 +104,16 @@ db.once('open', function() {
     console.log( 'HomeClub API listening on localhost:3030' );
   });
 
-  // HTTPS
-  // https.createServer( sslOptions, app ).listen( HTTPS_PORT, function() {
-  //   console.log( 'HomeClub API HTTPS listening on port ' + HTTPS_PORT );
-  // });
+  // demo.homeclub.us - HOMECLUB STATIC WEB (HTTPS)
+  hcWebApp.use( express.static( './homeclub-web-gh-pages' ) );
+
+  https.createServer( sslOptions, hcWebApp ).listen( HC_WEB_PORT, function() {
+    console.log( 'HomeClub STATIC WEB (HTTPS) listening on port ' + HC_WEB_PORT );
+
+    hcWebApp.get('*', function(req, res) {
+        res.sendFile(__dirname + '/homeclub-web-gh-pages/index.html'); // load the single view file (angular will handle the page changes on the front-end)
+    });
+  });
 });
 
 
